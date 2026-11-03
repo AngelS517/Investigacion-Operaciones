@@ -1,0 +1,5 @@
+/* Estilos exclusivos de la Esquina Noroeste.
+   Usa siempre el prefijo .noroeste- en las clases para no chocar con otros métodos. */
+.noroeste {
+  display: block;
+}

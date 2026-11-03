@@ -1,0 +1,5 @@
+/* Estilos exclusivos de Costos Mínimos.
+   Usa siempre el prefijo .minimos- en las clases para no chocar con otros métodos. */
+.minimos {
+  display: block;
+}

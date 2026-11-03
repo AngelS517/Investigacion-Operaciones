@@ -1,0 +1,5 @@
+/* Estilos exclusivos del Simplex.
+   Usa siempre el prefijo .simplex- en las clases para no chocar con otros métodos. */
+.simplex {
+  display: block;
+}
