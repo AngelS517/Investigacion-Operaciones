@@ -8,9 +8,8 @@ Aplicación web para resolver y estudiar problemas clásicos de **Investigación
 |---|---|
 | **Materia** | Investigación de Operaciones |
 | **Docente** | David Fernando Santamaría |
-| **Institución** | _(completar)_ |
-| **Semestre / periodo** | _(completar)_ |
-| **Integrantes** | _(nombre 1)_ · _(nombre 2)_ |
+| **Institución** | Universitaria Tecnologica de Santander |
+| **Integrantes** | Melissa Andrea Hernandez Neira · Angel Santiago Hernandez Alquichire |
 
 ## Métodos incluidos
 
@@ -23,15 +22,6 @@ Obtiene una solución básica inicial factible para problemas de transporte, asi
 ### Método de Costos Mínimos
 También obtiene una solución inicial factible para problemas de transporte, pero priorizando las rutas con el menor costo.
 
-## Estado del proyecto
-
-| Módulo | Estado |
-|---|---|
-| Portada de introducción y navegación por pestañas | Listo |
-| Simplex | En desarrollo |
-| Esquina Noroeste | En desarrollo |
-| Costos Mínimos | En desarrollo |
-
 ## Tecnologías
 
 - [React](https://react.dev/) para la interfaz
@@ -40,31 +30,6 @@ También obtiene una solución inicial factible para problemas de transporte, pe
 - ESLint para el análisis de código
 - CSS propio, sin librerías de estilos
 
-## Instalación y uso
-
-Requisitos: [Node.js](https://nodejs.org/) instalado.
-
-```bash
-# 1. Clonar el repositorio
-git clone <url-del-repositorio>
-cd <carpeta-del-proyecto>
-
-# 2. Instalar dependencias
-npm install
-
-# 3. Iniciar el servidor de desarrollo
-npm run dev
-```
-
-Luego abre en el navegador la dirección que aparece en la terminal (normalmente `http://localhost:5173`).
-
-Otros comandos útiles:
-
-```bash
-npm run build     # genera la versión de producción
-npm run preview   # prueba localmente esa versión
-npm run lint      # revisa el código con ESLint
-```
 
 ## Estructura del proyecto
 
@@ -88,13 +53,6 @@ src/
 ├── index.css              Estilos globales y variables de diseño
 └── main.jsx               Punto de entrada
 ```
-
-## Distribución del trabajo
-
-| Integrante | Responsabilidad | Carpeta |
-|---|---|---|
-| _(nombre 1)_ | Método Simplex | `src/modules/simplex/` |
-| _(nombre 2)_ | Esquina Noroeste y Costos Mínimos | `src/modules/noroeste/` y `src/modules/minimos/` |
 
 ### Convenciones de trabajo
 
