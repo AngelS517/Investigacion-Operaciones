@@ -1,0 +1,119 @@
+/* Decoración exclusiva de la portada.
+   Va fija detrás del contenido y no recibe clics. */
+.intro-decor {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity var(--exit-ms, 450ms) ease-in;
+}
+.intro-decor.is-leaving {
+  opacity: 0;
+}
+
+/* ---------- Cuadrícula en perspectiva (abajo) ---------- */
+.intro-decor__grid {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 45vh;
+  opacity: 0.6; /* sube o baja este valor para ver más o menos la cuadrícula */
+  animation: decor-grid-in 1.4s ease 0.3s backwards;
+}
+@keyframes decor-grid-in {
+  from { opacity: 0; }
+}
+
+/* ---------- Tubo de neón (arriba) ---------- */
+.neon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60vh;
+}
+
+/* El tubo se enciende desde el centro hacia los lados, con parpadeo.
+   El resplandor son dos copias difuminadas del mismo degradado, así se apaga
+   suavemente en los extremos y no queda un corte duro. */
+.neon__tube {
+  position: absolute;
+  top: 0;
+  left: 6%;
+  right: 6%;
+  height: var(--neon-thickness);
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--neon-a) 18%,
+    var(--neon-b) 50%,
+    var(--neon-a) 82%,
+    transparent
+  );
+  clip-path: inset(-80px -80px); /* los -80px dejan ver el resplandor completo */
+  animation:
+    neon-sweep var(--neon-duration) cubic-bezier(0.22, 1, 0.36, 1)
+      var(--neon-delay) backwards,
+    neon-flicker 0.9s steps(1) var(--neon-delay) backwards;
+}
+.neon__tube::before,
+.neon__tube::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 999px;
+  background: inherit;
+}
+.neon__tube::before {
+  top: -4px;
+  bottom: -4px;
+  filter: blur(8px);
+  opacity: 0.9;
+}
+.neon__tube::after {
+  top: -14px;
+  bottom: -14px;
+  filter: blur(26px);
+  opacity: 0.7;
+}
+
+/* La luz que cae sobre el contenido, con un zumbido muy suave */
+.neon__spill {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 55% 85% at 50% 0%,
+    var(--neon-a),
+    transparent 70%
+  );
+  opacity: 0.25;
+  animation:
+    neon-spill var(--neon-duration) ease-out var(--neon-delay) backwards,
+    neon-hum 4s ease-in-out calc(var(--neon-delay) + var(--neon-duration))
+      infinite alternate;
+}
+
+@keyframes neon-sweep {
+  from { clip-path: inset(-80px 50%); }
+  to   { clip-path: inset(-80px -80px); }
+}
+@keyframes neon-flicker {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  14%  { opacity: 0.15; }
+  22%  { opacity: 0.9; }
+  28%  { opacity: 0.3; }
+  40%  { opacity: 1; }
+  100% { opacity: 1; }
+}
+@keyframes neon-spill {
+  from { opacity: 0; clip-path: inset(0 50%); }
+  to   { opacity: 0.25; clip-path: inset(0 0); }
+}
+@keyframes neon-hum {
+  from { opacity: 0.2; }
+  to   { opacity: 0.3; }
+}

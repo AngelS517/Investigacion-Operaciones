@@ -1,18 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700&display=swap");
 
 :root {
-  --bg: #0d0d0f;
-  --surface: rgba(20, 20, 22, 0.85);
-  --border: #c8c8c8;
-  --border-soft: #4a4a4a;
-  --olive: #6e6c5c;
-  --olive-hover: #848270;
-  --text: #f0f0f0;
-  --muted: #a8a8a8;
+  /* ----- Paleta ----- */
+  --bg: #0a0912;
+  --surface: rgba(22, 18, 38, 0.78);
+  --border: #a79ad8;
+  --border-soft: #3b3360;
+  --text: #f4f1ff;
+  --muted: #b5afcf;
   --accent: #c9b8ff;
+  --violet: #8b5cf6;
+  --pink: #ff9ffc;
+  --cyan: #6fd6ff;
+
   --radius: 16px;
   --font-title: "Orbitron", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
+
+  /* ===== IMAGEN DE FONDO =====
+     Está en src/assets/fondo.png. Si cambias el nombre o la extensión
+     (.jpg, .png, .webp), cámbialo aquí. La capa .bg de App.css la muestra. */
+  /*--bg-image: url("./assets/fondo.png");*/
 }
 
 * {
@@ -25,14 +33,11 @@ body {
   min-height: 100vh;
   font-family: var(--font-body);
   color: var(--text);
-
-  background: url("./assets/fondo.png") center / cover fixed no-repeat, var(--bg);
+  /* Respaldo de color: se ve detrás de la imagen y mientras esta carga */
   background:
-    radial-gradient(ellipse at 15% 0%, #26262b 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 100%, #1d1d22 0%, transparent 45%),
+    radial-gradient(60% 50% at 15% 0%, rgba(139, 92, 246, 0.28), transparent 60%),
+    radial-gradient(55% 45% at 100% 100%, rgba(255, 159, 252, 0.14), transparent 60%),
+    radial-gradient(40% 40% at 0% 100%, rgba(111, 214, 255, 0.1), transparent 60%),
     var(--bg);
-    background:
-    radial-gradient(ellipse at 15% 0%, #26262b 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 100%, #1d1d22 0%, transparent 45%),
-    var(--bg);
+  background-attachment: fixed;
 }
