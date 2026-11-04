@@ -25,7 +25,13 @@ body {
   min-height: 100vh;
   font-family: var(--font-body);
   color: var(--text);
+
+  background: url("./assets/fondo.png") center / cover fixed no-repeat, var(--bg);
   background:
+    radial-gradient(ellipse at 15% 0%, #26262b 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, #1d1d22 0%, transparent 45%),
+    var(--bg);
+    background:
     radial-gradient(ellipse at 15% 0%, #26262b 0%, transparent 50%),
     radial-gradient(ellipse at 100% 100%, #1d1d22 0%, transparent 45%),
     var(--bg);
