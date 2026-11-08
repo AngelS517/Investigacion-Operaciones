@@ -1,5 +1,263 @@
-/* Estilos exclusivos del Simplex.
-   Usa siempre el prefijo .simplex- en las clases para no chocar con otros métodos. */
-.simplex {
+/* src/modules/simplex/simplex.css */
+
+/* Grid principal para separar configuración de restricciones */
+.simplex-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+@media (max-width: 800px) {
+  .simplex-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Estilos de inputs y grupos */
+.input-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 10px;
+}
+
+.simplex-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border-soft, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 100%;
+}
+
+.simplex-input:focus {
+  border-color: var(--accent);
+}
+
+/* Contenedor de Restricciones */
+.restricciones-title {
   display: block;
+  font-size: 0.85rem;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 6px;
+}
+
+.restricciones-header {
+  display: grid;
+  grid-template-columns: 30px 2fr 80px 1fr 40px;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.restriccion-row {
+  display: grid;
+  grid-template-columns: 30px 2fr 80px 1fr 40px;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.row-num {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.simplex-select {
+  cursor: pointer;
+  appearance: none;
+  text-align: center;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: color 0.2s;
+}
+
+.btn-icon:hover {
+  color: #ff5f5f;
+}
+
+/* Botones de acción */
+.simplex-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.btn-add {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-style: dashed;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Sección de resultados */
+.simplex-results {
+  margin-top: 40px;
+  border-top: 2px dashed var(--border-soft, rgba(255,255,255,0.1));
+  padding-top: 20px;
+}
+
+.simplex-results h3 {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+@media (max-width: 800px) {
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Solución Óptima */
+.optimal-solution {
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.optimal-solution h4 {
+  font-size: 0.9rem;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+
+.variables-result {
+  display: flex;
+  gap: 10px;
+}
+
+.var-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.var-box span {
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.var-box input {
+  text-align: center;
+  padding: 8px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #fff;
+}
+
+.z-result {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.z-result label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.z-result input {
+  padding: 10px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: var(--accent);
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Tabla Final */
+.final-table-container {
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.table-header {
+  margin-bottom: 15px;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.simplex-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.simplex-table th {
+  padding: 12px;
+  border-bottom: 2px solid var(--border);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.simplex-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.simplex-table tr:last-child td {
+  border-bottom: none;
+}
+
+.simplex-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
 }
