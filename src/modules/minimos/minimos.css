@@ -1,5 +1,89 @@
-/* Estilos exclusivos de Costos Mínimos.
-   Usa siempre el prefijo .minimos- en las clases para no chocar con otros métodos. */
+/* Estilos exclusivos de la Costos Mínimos (prefijo .minimos-). */
+@import url("https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap");
+
 .minimos {
+  --mn-math: "STIX Two Text", "Latin Modern Math", Georgia, serif;
+  --mn-line: rgba(255, 255, 255, 0.22);
+  --mn-violet: #a98bff;
+  --mn-panel: #16161b;
+  color-scheme: dark;
   display: block;
+}
+.minimos-desc { width: 100%; font-size: 0.95rem; line-height: 1.6; color: var(--muted); margin-bottom: 20px; overflow-wrap: break-word; }
+.minimos-dims { display: flex; flex-wrap: wrap; align-items: end; gap: 18px; margin-bottom: 18px; }
+.minimos-dims label { display: grid; gap: 6px; font-size: 0.8rem; color: var(--muted); }
+.minimos-dims select,
+.minimos-input {
+  font: inherit;
+  color: #fff;
+  background: var(--mn-panel);
+  border: 1px solid var(--mn-line);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.minimos-dims select { min-width: 84px; cursor: pointer; }
+/* Desplegables: texto claro sobre fondo oscuro (antes salían blancos sobre blanco). */
+.minimos-dims select option { background: var(--mn-panel); color: #fff; }
+.minimos-ghost { border-width: 1px; padding: 8px 16px; }
+.minimos-ghost:disabled { opacity: 0.35; cursor: default; }
+
+.minimos-scroll { overflow-x: auto; margin-bottom: 18px; }
+.minimos-table { border-collapse: collapse; width: 100%; min-width: 520px; font-family: var(--mn-math); }
+.minimos-table caption { text-align: left; font-family: var(--font-body); font-size: 0.8rem; color: var(--muted); padding-bottom: 10px; }
+.minimos-table th { font-family: var(--font-body); font-weight: 500; font-size: 0.8rem; color: var(--muted); padding: 10px; white-space: nowrap; transition: color 0.3s; }
+.minimos-table td { border: 1px solid var(--mn-line); padding: 6px; text-align: center; }
+.minimos-edge { background: rgba(255, 255, 255, 0.04); font-size: 1.05rem; }
+.minimos-edge small { display: block; font-family: var(--font-body); font-size: 0.7rem; color: var(--muted); }
+.minimos-input { width: 100%; min-width: 64px; text-align: center; font-family: var(--mn-math); font-size: 1.05rem; }
+.minimos-input:focus-visible,
+.minimos-dims select:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+
+.minimos-go { margin-bottom: 8px; }
+.minimos-error { color: #ffb4b4; font-size: 0.9rem; margin-bottom: 12px; }
+.minimos-note { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 14px; }
+.minimos-res { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--mn-line); }
+
+/* Celdas del resultado */
+.minimos-cell { position: relative; height: 74px; min-width: 84px; transition: background 0.3s, box-shadow 0.3s; }
+.minimos-cost { position: absolute; top: 5px; right: 8px; z-index: 1; font-size: 0.78rem; color: var(--muted); }
+.minimos-qty { font-weight: 600; font-size: 1.35rem; }
+.minimos-cell.is-on { background: rgba(255, 255, 255, 0.07); }
+.minimos-cell.is-now { background: rgba(255, 255, 255, 0.14); box-shadow: inset 0 0 0 1px #fff, 0 0 18px rgba(255, 255, 255, 0.25); }
+.minimos-cell.is-next { outline: 1px dashed #fff; outline-offset: -4px; animation: mn-pulse 1.6s ease-in-out infinite; }
+
+/* Tachado: líneas diagonales moradas sobre lo que ya no se puede usar */
+.minimos-cell.is-cut { background: rgba(169, 139, 255, 0.07); }
+.minimos-cell.is-cut::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(135deg, transparent 0 8px, var(--mn-violet) 8px 9.5px);
+  opacity: 0.75;
+}
+.minimos-cell.is-new { animation: mn-flash 0.9s ease-out; }
+.minimos-cell.is-new::after { animation: mn-tachar 0.8s ease-out both; }
+.minimos-table th.is-struck { color: var(--mn-violet); text-decoration: line-through; text-decoration-thickness: 2px; }
+
+@keyframes mn-tachar { from { clip-path: inset(0 100% 100% 0); opacity: 0; } to { clip-path: inset(0 0 0 0); opacity: 0.75; } }
+@keyframes mn-flash { 0% { box-shadow: inset 0 0 22px var(--mn-violet); } 100% { box-shadow: inset 0 0 0 transparent; } }
+@keyframes mn-pulse { 0%, 100% { background: transparent; } 50% { background: rgba(255, 255, 255, 0.09); } }
+
+/* Controles y explicación */
+.minimos-steps { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+.minimos-steps input[type="range"] { flex: 1; min-width: 140px; accent-color: var(--mn-violet); }
+.minimos-count { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
+.minimos-info { display: grid; gap: 12px; margin-bottom: 20px; }
+.minimos-card { border: 1px solid var(--mn-line); border-left: 2px solid #fff; border-radius: 10px; padding: 14px 18px; background: rgba(255, 255, 255, 0.03); }
+.minimos-card.is-next { border-left-color: var(--mn-violet); }
+.minimos-card h4 { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.minimos-card p { line-height: 1.65; font-size: 0.92rem; }
+.minimos-why { margin-top: 8px; color: var(--mn-violet); }
+
+.minimos-total { border-left: 1px solid #fff; padding-left: 18px; }
+.minimos-eq { font-family: var(--mn-math); font-size: 1.2rem; line-height: 1.7; margin-bottom: 8px; overflow-wrap: anywhere; }
+.minimos-eq strong { font-size: 1.5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .minimos-cell, .minimos-cell::after { animation: none !important; transition: none; }
 }

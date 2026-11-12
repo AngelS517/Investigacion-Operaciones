@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { esquinaNoroeste } from "./noroeste";
+import { esquinaNoroeste, marcas, limpiar } from "./noroeste";
 import "./noroeste.css";
 
 const EJEMPLO = {
@@ -9,6 +9,8 @@ const EJEMPLO = {
   supply: ["35", "50", "40"],
   demand: ["45", "20", "30", "30"],
 };
+
+const VACIO = { m: 0, n: 0, costs: [], supply: [], demand: [] };
 
 const fmt = (x) => x.toLocaleString("es-CO", { maximumFractionDigits: 4 });
 const num = (v) => {
@@ -60,33 +62,35 @@ export default function NoroestePanel() {
       return setError("Completa todas las casillas con números mayores o iguales a 0.");
     if (supply.every((x) => x === 0) || demand.every((x) => x === 0))
       return setError("La oferta y la demanda deben tener al menos un valor mayor que 0.");
-    const r = esquinaNoroeste(costs, supply, demand);
-    setRes(r);
-    setShown(r.steps.length);
+    setRes(esquinaNoroeste(costs, supply, demand));
+    setShown(0); // el recorrido empieza desde el primer paso
     setError("");
   };
 
   return (
     <div className="noroeste">
-      <p className="noroeste-formula" aria-hidden="true">
-        Z = Σ c<sub>ij</sub> x<sub>ij</sub>
+      <p className="noroeste-desc">
+        El método de la esquina noroeste comienza en la primera celda de la tabla, donde se asigna la mayor cantidad posible teniendo en cuenta la oferta disponible y la demanda requerida. Después, se actualizan estos valores y se avanza hacia la siguiente celda, ya sea bajando de fila o avanzando de columna, dependiendo de cuál se haya completado. Este proceso se repite hasta satisfacer toda la demanda y distribuir toda la oferta.
       </p>
-
+ 
       <div className="noroeste-dims">
         <label>
           Orígenes
           <select value={p.m} onChange={(e) => editar(redim(p, +e.target.value, p.n))}>
-            {[2, 3, 4, 5, 6].map((k) => <option key={k}>{k}</option>)}
+            {[2, 3, 4, 5, 6].map((k) => <option key={k} value={k}>{k}</option>)}
           </select>
         </label>
         <label>
           Destinos
           <select value={p.n} onChange={(e) => editar(redim(p, p.m, +e.target.value))}>
-            {[2, 3, 4, 5, 6].map((k) => <option key={k}>{k}</option>)}
+            {[2, 3, 4, 5, 6].map((k) => <option key={k} value={k}>{k}</option>)}
           </select>
         </label>
         <button type="button" className="btn noroeste-ghost" onClick={() => editar(EJEMPLO)}>
           Cargar ejemplo
+        </button>
+        <button type="button" className="btn noroeste-ghost" onClick={() => editar(redim(VACIO, p.m, p.n))}>
+          Limpiar
         </button>
       </div>
 
@@ -136,13 +140,29 @@ export default function NoroestePanel() {
     </div>
   );
 }
-console.log("NOROESTE NUEVO CARGADO");
+
 function Resultado({ res, shown, setShown }) {
-  const { problem: q, steps, terms, total, degenerada } = res;
-  const asignado = new Map(steps.slice(0, shown).map((t) => [`${t.i},${t.j}`, t.qty]));
+  const { problem: q, steps, raw, terms, total, degenerada } = res;
+  const N = steps.length;
+  const hechos = steps.slice(0, shown);
+  const asignado = new Map(hechos.map((t) => [`${t.i},${t.j}`, t.qty]));
   const actual = shown > 0 ? steps[shown - 1] : null;
+  const sig = shown < N ? steps[shown] : null;
+  const tach = marcas(raw, steps, shown, q.m, q.n);
+
+  const restoO = q.supply.map((s, i) => limpiar(s - hechos.filter((t) => t.i === i).reduce((a, t) => a + t.qty, 0)));
+  const restoD = q.demand.map((d, j) => limpiar(d - hechos.filter((t) => t.j === j).reduce((a, t) => a + t.qty, 0)));
   const nombreO = (i) => (q.ficticio === "fila" && i === q.m - 1 ? "Ficticio" : `Origen ${i + 1}`);
   const nombreD = (j) => (q.ficticio === "col" && j === q.n - 1 ? "Ficticio" : `Destino ${j + 1}`);
+
+  const porque = (t) => {
+    if (shown === N) return "Ya no queda oferta ni demanda por repartir: el método termina aquí.";
+    if (t.cierra === "fila")
+      return `Se tacha la fila de ${nombreO(t.i)}: su oferta quedó en 0 y no puede enviar más. Se baja a ${nombreO(t.i + 1)}.`;
+    if (t.cierra === "col")
+      return `Se tacha la columna de ${nombreD(t.j)}: su demanda quedó cubierta (0) y no necesita más. Se avanza a ${nombreD(t.j + 1)}.`;
+    return `La oferta de ${nombreO(t.i)} y la demanda de ${nombreD(t.j)} se agotan a la vez. Se tachan la fila y la columna: la celda tachada que sigue equivale a una asignación de 0 (solución degenerada).`;
+  };
 
   return (
     <section className="noroeste-res" aria-live="polite">
@@ -159,30 +179,48 @@ function Resultado({ res, shown, setShown }) {
           <thead>
             <tr>
               <th />
-              {q.demand.map((_, j) => <th key={j} scope="col">{nombreD(j)}</th>)}
+              {q.demand.map((_, j) => (
+                <th key={j} scope="col" className={tach.columnas.has(j) ? "is-struck" : ""}>{nombreD(j)}</th>
+              ))}
               <th scope="col">Oferta</th>
             </tr>
           </thead>
           <tbody>
             {q.costs.map((fila, i) => (
               <tr key={i}>
-                <th scope="row">{nombreO(i)}</th>
+                <th scope="row" className={tach.filas.has(i) ? "is-struck" : ""}>{nombreO(i)}</th>
                 {fila.map((c, j) => {
                   const k = `${i},${j}`;
-                  const on = actual && actual.i === i && actual.j === j;
+                  const corte = tach.celdas.get(k);
+                  const cls = [
+                    "noroeste-cell",
+                    asignado.has(k) && "is-on",
+                    actual && actual.i === i && actual.j === j && "is-now",
+                    sig && sig.i === i && sig.j === j && "is-next",
+                    corte !== undefined && "is-cut",
+                    corte === shown && "is-new",
+                  ].filter(Boolean).join(" ");
                   return (
-                    <td key={j} className={`noroeste-cell${asignado.has(k) ? " is-on" : ""}${on ? " is-now" : ""}`}>
+                    <td key={j} className={cls}>
                       <span className="noroeste-cost">{fmt(c)}</span>
                       {asignado.has(k) && <b className="noroeste-qty">{fmt(asignado.get(k))}</b>}
                     </td>
                   );
                 })}
-                <td className="noroeste-edge">{fmt(q.supply[i])}</td>
+                <td className="noroeste-edge">
+                  {fmt(q.supply[i])}
+                  <small>queda {fmt(restoO[i])}</small>
+                </td>
               </tr>
             ))}
             <tr>
               <th scope="row">Demanda</th>
-              {q.demand.map((d, j) => <td key={j} className="noroeste-edge">{fmt(d)}</td>)}
+              {q.demand.map((d, j) => (
+                <td key={j} className="noroeste-edge">
+                  {fmt(d)}
+                  <small>queda {fmt(restoD[j])}</small>
+                </td>
+              ))}
               <td />
             </tr>
           </tbody>
@@ -190,28 +228,45 @@ function Resultado({ res, shown, setShown }) {
       </div>
 
       <div className="noroeste-steps">
+        <button type="button" className="btn noroeste-ghost" disabled={shown === 0} onClick={() => setShown(0)}>Reiniciar</button>
         <button type="button" className="btn noroeste-ghost" disabled={shown === 0} onClick={() => setShown(shown - 1)} aria-label="Paso anterior">‹</button>
-        <input type="range" min="0" max={steps.length} value={shown} onChange={(e) => setShown(+e.target.value)} aria-label="Paso del método" />
-        <button type="button" className="btn noroeste-ghost" disabled={shown === steps.length} onClick={() => setShown(shown + 1)} aria-label="Paso siguiente">›</button>
+        <input type="range" min="0" max={N} value={shown} onChange={(e) => setShown(+e.target.value)} aria-label="Paso del método" />
+        <button type="button" className="btn noroeste-ghost" disabled={shown === N} onClick={() => setShown(shown + 1)} aria-label="Paso siguiente">›</button>
+        <button type="button" className="btn noroeste-ghost" disabled={shown === N} onClick={() => setShown(N)}>Ver todo</button>
       </div>
-      <p className="noroeste-explain">
-        {actual
-          ? `Paso ${shown} de ${steps.length}: en ${nombreO(actual.i)} → ${nombreD(actual.j)} se asigna el menor entre oferta ${fmt(actual.ofertaAntes)} y demanda ${fmt(actual.demandaAntes)}, es decir ${fmt(actual.qty)}. ${
-              actual.cierra === "fila" ? "Se agota la oferta: baja una fila."
-              : actual.cierra === "col" ? "Se cubre la demanda: avanza una columna."
-              : "Se agotan ambas: baja una fila y la siguiente asignación será 0."
-            }`
-          : "Mueve el control para ver cada asignación, empezando por la esquina superior izquierda."}
-      </p>
+      <p className="noroeste-count">{shown === 0 ? "Inicio" : `Paso ${shown} de ${N}`}</p>
 
-      {shown === steps.length && (
+      <div className="noroeste-info">
+        {actual && (
+          <article className="noroeste-card">
+            <h4>Lo que se hizo</h4>
+            <p>
+              En {nombreO(actual.i)} → {nombreD(actual.j)} se asignaron <strong>{fmt(actual.qty)}</strong> unidades:
+              el menor entre la oferta disponible ({fmt(actual.ofertaAntes)}) y la demanda pendiente ({fmt(actual.demandaAntes)}).
+            </p>
+            <p className="noroeste-why">{porque(actual)}</p>
+          </article>
+        )}
+        {sig && (
+          <article className="noroeste-card is-next">
+            <h4>{shown === 0 ? "Cómo se empieza" : "Lo que sigue"}</h4>
+            <p>
+              {shown === 0 && "El método siempre arranca en la esquina noroeste, la celda de arriba a la izquierda. "}
+              Se evalúa {nombreO(sig.i)} → {nombreD(sig.j)}: oferta disponible {fmt(sig.ofertaAntes)}, demanda pendiente {fmt(sig.demandaAntes)}.
+              Se toma el menor: min({fmt(sig.ofertaAntes)}, {fmt(sig.demandaAntes)}) = <strong>{fmt(sig.qty)}</strong>.
+            </p>
+          </article>
+        )}
+      </div>
+
+      {shown === N && (
         <div className="noroeste-total">
           <p className="noroeste-eq">
             Z = {terms.map((t) => `${fmt(t.qty)}×${fmt(t.costo)}`).join(" + ")} = <strong>{fmt(total)}</strong>
           </p>
           <p className="noroeste-note">
-            {steps.length} variables básicas ({q.m} + {q.n} − 1).
-            {degenerada && " La solución es degenerada: incluye una asignación igual a 0."}
+            {raw.length} variables básicas ({q.m} + {q.n} − 1).
+            {degenerada && " Es degenerada: una variable básica vale 0 y se representa con las diagonales."}
           </p>
         </div>
       )}
